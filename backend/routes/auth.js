@@ -2,16 +2,17 @@ const express = require("express");
 const User = require("../models/userSchema")
 const { body, validationResult } = require("express-validator")
 const bcrypt=require("bcrypt");
-
+const jwt=require("jsonwebtoken");
 const router = express.Router();
+const JWT_SECRET="iamadevelkjvjhjvoperlearnkjgjhinghowtocode"
 
-router.post("/", [body('name', 'Enter a valid name').isLength({ min: 3 }),
+router.post("/createUser", [body('name', 'Enter a valid name').isLength({ min: 3 }),
 body('email', 'Enter a valid email').isEmail(),
 body('password', 'Password must be at least 5 characters long').isLength({ min: 3 })],
     async (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            res.status(400).json({ errors: errors.array() });
+            return res.status(400).json({ errors: errors.array() });
         }
 
         try {
@@ -34,6 +35,42 @@ body('password', 'Password must be at least 5 characters long').isLength({ min: 
             res.status(500).send("Some error occured")
         }
 
-    })
+})
+
+router.post("/login", [body('email', 'Enter a valid email').isEmail(),
+body('password', 'Password cannot be blank').exists()], async(req,res)=>{
+    const errors=validationResult(req);
+    if(!errors.isEmpty()){
+        return res.status(400).json({error:errors.array()});
+    }
+
+    const {email, password}=req.body;
+    try{
+        let user=await User.findOne({email});
+        if(!user){
+            return res.status(400).json({error:"Please try login with correct credentials"});
+        }
+
+        const comparePass=await bcrypt.compare(password,user.password);
+        if(!comparePass){
+            console.log(password);
+            console.log(req.body.password);
+            return res.status(400).json({error:"Please password enter valid credentials"})
+        }
+
+        const data={
+            user:{
+                id:user.id
+            }
+        }
+
+        const authToken=jwt.sign(data,JWT_SECRET);
+        res.json(authToken);
+    }
+    catch(e){
+        console.log(e.message);
+        res.status(500).send("Internal Server Error");
+    }
+})
 
 module.exports = router;

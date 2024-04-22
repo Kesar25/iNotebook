@@ -5,6 +5,7 @@ const bcrypt=require("bcrypt");
 const jwt=require("jsonwebtoken");
 const router = express.Router();
 const JWT_SECRET="iamadevelkjvjhjvoperlearnkjgjhinghowtocode"
+const fetchUser=require("../middleware/fetchUser");
 
 router.post("/createUser", [body('name', 'Enter a valid name').isLength({ min: 3 }),
 body('email', 'Enter a valid email').isEmail(),
@@ -72,5 +73,18 @@ body('password', 'Password cannot be blank').exists()], async(req,res)=>{
         res.status(500).send("Internal Server Error");
     }
 })
+
+router.post("/getUser", fetchUser, async(req,res)=>{
+    try{
+        const userId=req.user.id;
+        const user=await User.findById(userId).select("-password");
+        res.send(user)
+    }catch(e){
+        console.log(e.message);
+        res.status(500).send("Internal Server Error");
+    }
+
+})
+
 
 module.exports = router;

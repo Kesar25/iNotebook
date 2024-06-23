@@ -2,8 +2,10 @@ const dbConnection=require("./db/conn");
 const userRouter=require("./routes/auth.js");
 const notesRouter=require("./routes/notes.js")
 const express=require("express");
+var cors = require('cors')
+var app = express()
 
-const app=express();
+app.use(cors())
 dbConnection();
 
 app.use(express.json())

@@ -4,6 +4,7 @@ import { useState } from "react";
 const NoteState = (props) => {
     const host="http://localhost:8000"
     const noteInitial = []
+    const [notes, setNotes] = useState(noteInitial);
 
     //Add a Note
     const addNote = async (title, description, tag) => {
@@ -17,7 +18,8 @@ const NoteState = (props) => {
         },
         body: JSON.stringify({title, description, tag})
       });
-  
+      const json = await response.json();
+      console.log(json)
   
       console.log("Adding a new note")
       const note = {
@@ -36,7 +38,7 @@ const NoteState = (props) => {
     //Get all Note
     const getNotes = async () => {
       // API Call 
-      const response = await fetch(`${host}/api/v1/notes//fetchNotes`, {
+      const response = await fetch(`${host}/api/v1/notes/fetchNotes`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -68,7 +70,7 @@ const NoteState = (props) => {
     const editNote = async (id, title, description, tag) => {
       // API Call 
       const response = await fetch(`${host}/api/v1/notes/updatenote/${id}`, {
-        method: 'POST',
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           "auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjYyNjI3NWMzNGU1ZjU2MGQ2M2UwZTdlIn0sImlhdCI6MTcxMzgwMzkwM30.Lzl0yG3XlAp8FRz6FUXuNxqsF_1XIHS6-CfsJKjdfqg"
@@ -78,15 +80,18 @@ const NoteState = (props) => {
       const json = response.json();
   
       // Logic to edit in client
+      let newNotes = JSON.parse(JSON.stringify(notes))
       for (let index = 0; index < notes.length; index++) {
-        const element = notes[index];
+        const element = newNotes[index];
         if (element._id === id) {
-          element.title = title;
-          element.description = description;
-          element.tag = tag;
-        }}}
+          newNotes[index].title = title;
+        newNotes[index].description = description;
+        newNotes[index].tag = tag; 
+        break; 
+        }}
+        setNotes(newNotes);}
 
-    const [notes, setNotes] = useState(noteInitial);
+  
     return (
         <NoteContext.Provider value={{notes,addNote,deleteNote,editNote,getNotes}}>
             {props.children}

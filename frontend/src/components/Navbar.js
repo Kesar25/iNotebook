@@ -22,10 +22,11 @@ function Navbar() {
               <li className="nav-item">
                 <Link className={`nav-link ${location.pathname==="/About"?"active":""}`} to="/About">About</Link>
               </li>
-
-
-            </ul>
-
+          </ul>
+          <form className='d-flex'>
+          <Link className="btn btn-primary mx-1" to="/login" role="button" aria-disabled="true">Login</Link>
+          <Link className="btn btn-primary mx-1" to="/signup" role="button" aria-disabled="true">SignUp</Link>
+          </form>
           </div>
         </div>
       </nav>

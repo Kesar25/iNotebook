@@ -19,21 +19,25 @@ body('password', 'Password must be at least 5 characters long').isLength({ min: 
         try {
             let user = await User.findOne({ email: req.body.email });
             if (user) {
-                return res.status(400).json({ error: "Sorry user with this email already exist" })
+                let success=false
+                return res.status(400).json({success, error: "Sorry user with this email already exist" })
             }
             
             const salt = await bcrypt.genSalt(10);
             const secPass=await bcrypt.hash(req.body.password, salt);
 
+            
             user = await User.create({
                 name: req.body.name,
                 password: secPass,
                 email: req.body.email
             })
-            res.json(user)
+            let success=true;
+            res.json({success,user})
         } catch (e) {
             console.log(e.message);
-            res.status(500).send("Some error occured")
+            let success=false
+            res.status(500).send({success,error:"Some error occured"})
         }
 
 })
@@ -54,9 +58,8 @@ body('password', 'Password cannot be blank').exists()], async(req,res)=>{
 
         const comparePass=await bcrypt.compare(password,user.password);
         if(!comparePass){
-            console.log(password);
-            console.log(req.body.password);
-            return res.status(400).json({error:"Please password enter valid credentials"})
+            let success=false
+            return res.status(400).json({success, error:"Please password enter valid credentials"})
         }
 
         const data={
@@ -66,7 +69,8 @@ body('password', 'Password cannot be blank').exists()], async(req,res)=>{
         }
 
         const authToken=jwt.sign(data,JWT_SECRET);
-        res.json(authToken);
+        let success=true;
+        res.json({success,authToken});
     }
     catch(e){
         console.log(e.message);
@@ -78,10 +82,12 @@ router.post("/getUser", fetchUser, async(req,res)=>{
     try{
         const userId=req.user.id;
         const user=await User.findById(userId).select("-password");
-        res.send(user)
+        success=true;
+        res.send({success,user})
     }catch(e){
         console.log(e.message);
-        res.status(500).send("Internal Server Error");
+        success=false;
+        res.status(500).send({success, error:"Internal Server Error"});
     }
 
 })

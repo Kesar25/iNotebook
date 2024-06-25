@@ -24,9 +24,9 @@ const Login = (props) => {
         const json = await response.json();
         console.log(json);
         if(json.success){
-            localStorage.setItem('token',json.authtoken);
-            navigate("/")
+            localStorage.setItem('token',json.authToken);
             props.showAlert("User logged in successfully" , "success")
+            navigate("/")     
         }
         else{
           props.showAlert("Invalid Credentials", "danger")
@@ -34,7 +34,8 @@ const Login = (props) => {
         
     }   
   return (
-    <div>
+    <div className='mt-3'>
+      <h2>Please Login to start using iNotebook</h2>
       <form onSubmit={handleSubmit}>
   <div className="form-group">
     <label htmlFor="exampleInputEmail1">Email address</label>
@@ -46,7 +47,7 @@ const Login = (props) => {
     <input type="password" className="form-control" id="exampleInputPassword1" placeholder="Password" name="password" value={credentials.password} onChange={onChange}/>
   </div>
   
-  <button type="submit" className="btn btn-primary" >Submit</button>
+  <button type="submit" className="btn btn-primary mt-3" >Submit</button>
 </form>
     </div>
   )

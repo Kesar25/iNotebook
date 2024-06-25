@@ -34,7 +34,8 @@ const SignUp = (props) => {
         
     }
   return (
-    <div>
+    <div className='mt-3'>
+      <h2>Please fill your details below to create an account</h2>
       <form onSubmit={handleSubmit}>
       <div className="form-group">
     <label htmlFor="exampleInputEmail1">Name</label>
@@ -51,7 +52,7 @@ const SignUp = (props) => {
     <input type="password" className="form-control" id="exampleInputPassword1" placeholder="Password" name="password" value={credentials.password} onChange={onChange}/>
   </div>
   
-  <button type="submit" className="btn btn-primary" >Submit</button>
+  <button type="submit" className="btn btn-primary mt-3" >Submit</button>
 </form>
     </div>
   )

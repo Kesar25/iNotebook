@@ -2,7 +2,7 @@ import React from 'react'
 import {useState} from 'react'
 import { useNavigate } from 'react-router-dom';
 
-const SignUp = () => {
+const SignUp = (props) => {
     const [credentials, setCredentials]= useState({name:"",email:"", password:""});
     const navigate=useNavigate();
 
@@ -26,9 +26,10 @@ const SignUp = () => {
         console.log(json);
         if(json.success){
             navigate("/")
+            props.showAlert("User created successfully" , "success")
         }
         else{
-            alert("User with this email already exists")
+          props.showAlert("Invalid details", "danger")
         }
         
     }
